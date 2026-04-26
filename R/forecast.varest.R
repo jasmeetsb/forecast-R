@@ -47,7 +47,7 @@ forecast.varest <- function(
       start = tspx[2] + 1 / tspx[3]
     )
     colnames(fcast$lower) <- colnames(fcast$upper) <- paste0(level, "%")
-    fcast$residuals <- fcast$fitted <- ts(rep(NA, nrow(object$y)))
+    fcast$residuals <- fcast$fitted <- ts(rep(NA_real_, nrow(object$y)))
     fcast$residuals[((1 - nrow(vres)):0) + length(fcast$residuals)] <- vres[, j]
     fcast$fitted[((1 - nrow(vfits)):0) + length(fcast$fitted)] <- vfits[, j]
     fcast$method <- method

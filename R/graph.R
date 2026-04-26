@@ -214,11 +214,11 @@ seasonplot <- function(
   tsx <- x
   startperiod <- round(cycle(x)[1])
   if (startperiod > 1) {
-    x <- c(rep(NA, startperiod - 1), x)
+    x <- c(rep(NA_real_, startperiod - 1), x)
   }
-  x <- c(x, rep(NA, s - length(x) %% s))
+  x <- c(x, rep(NA_real_, s - length(x) %% s))
   Season <- rep(c(1:s, NA), length(x) / s)
-  xnew <- rep(NA, length(x))
+  xnew <- rep(NA_real_, length(x))
   xnew[!is.na(Season)] <- x
 
   if (s == 12) {

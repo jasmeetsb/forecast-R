@@ -924,10 +924,8 @@ autoplot.forecast <- function(
   } else {
     # Time series objects (assumed)
     if (!missing(shadecols)) {
-      warning(
-        "The `schadecols` argument is deprecated for time series forecasts.
-Interval shading is now done automatically based on the level and `fcol`.",
-        call. = FALSE
+      .Deprecated(
+        msg = "The `shadecols` argument is deprecated for time series forecasts. Interval shading is now done automatically based on the level and `fcol`."
       )
     }
     # Data points
@@ -1035,7 +1033,7 @@ autoplot.mforecast <- function(
     # Set up grid
     # ncol: Number of columns of plots
     # nrow: Number of rows needed, calculated from # of cols
-    gridlayout <- matrix(seq(1, K), ncol = 1, nrow = K)
+    gridlayout <- matrix(seq_len(K), ncol = 1, nrow = K)
 
     grid::grid.newpage()
     grid::pushViewport(grid::viewport(
@@ -1276,7 +1274,7 @@ gglagplot <- function(
   }
 
   # Make sure lags is evaluated
-  tmp <- lags
+  force(lags)
   x <- as.matrix(x)
 
   # Prepare data for plotting
@@ -1416,7 +1414,7 @@ gglagchull <- function(
   ...
 ) {
   # Make sure lags is evaluated
-  tmp <- lags
+  force(lags)
   x <- as.matrix(x)
 
   # Prepare data for plotting
@@ -2464,16 +2462,16 @@ forecast2plotdf <- function(
       if (length(Hiloc) > 0) {
         out <- data.frame(
           x = rep(xVals, length(Hiloc) + 1),
-          y = c(rep(NA, NROW(data) * (length(Hiloc))), data[, 1]),
+          y = c(rep(NA_real_, NROW(data) * (length(Hiloc))), data[, 1]),
           level = c(
             as.numeric(rep(
               gsub("Hi ", "", names(data)[Hiloc], fixed = TRUE),
               each = NROW(data)
             )),
-            rep(NA, NROW(data))
+            rep(NA_real_, NROW(data))
           ),
-          ymax = c(unlist(data[, Hiloc]), rep(NA, NROW(data))),
-          ymin = c(unlist(data[, Loloc]), rep(NA, NROW(data))),
+          ymax = c(unlist(data[, Hiloc]), rep(NA_real_, NROW(data))),
+          ymin = c(unlist(data[, Loloc]), rep(NA_real_, NROW(data))),
           check.names = FALSE
         )
         numInterval <- length(model$level)
@@ -2488,9 +2486,9 @@ forecast2plotdf <- function(
     out <- data.frame(
       x = xVals,
       y = as.numeric(model$mean),
-      level = rep(NA, NROW(model$mean)),
-      ymax = rep(NA, NROW(model$mean)),
-      ymin = rep(NA, NROW(model$mean)),
+      level = rep(NA_real_, NROW(model$mean)),
+      ymax = rep(NA_real_, NROW(model$mean)),
+      ymin = rep(NA_real_, NROW(model$mean)),
       check.names = FALSE
     )
     numInterval <- 0
@@ -2503,7 +2501,7 @@ forecast2plotdf <- function(
     } else {
       intervalGap <- data.frame(
         x = rep(time(model$x)[length(model$x)], numInterval + 1),
-        y = c(model$x[length(model$x)], rep(NA, numInterval)),
+        y = c(model$x[length(model$x)], rep(NA_real_, numInterval)),
         level = c(NA, model$level)[seq_along(1:(numInterval + 1))],
         ymax = c(NA, rep(model$x[length(model$x)], numInterval)),
         ymin = c(NA, rep(model$x[length(model$x)], numInterval)),

@@ -206,12 +206,12 @@ forecast.mts <- function(
 
 #' @export
 print.mforecast <- function(x, ...) {
-  lapply(x$forecast, function(x) {
-    cat(paste0(x$series, "\n"))
-    print(x)
+  for (fc in x$forecast) {
+    cat(paste0(fc$series, "\n"))
+    print(fc)
     cat("\n")
-  })
-  invisible()
+  }
+  invisible(x)
 }
 
 

@@ -144,7 +144,7 @@ spline_model <- function(
   maxO <- max(mat$Omega)
 
   # Get one-step predictors
-  yfit <- e <- ts(rep(NA, n))
+  yfit <- e <- ts(rep(NA_real_, n))
   if (n > 1000) {
     warning("Series too long to compute training set fits and residuals")
   } else {
@@ -258,7 +258,7 @@ forecast.spline_model <- function(
   nconf <- length(level)
   startf <- tsp(y)[2] + 1 / freq
   lower <- upper <- ts(
-    matrix(NA, nrow = h, ncol = nconf),
+    matrix(NA_real_, nrow = h, ncol = nconf),
     start = startf,
     frequency = freq
   )
@@ -366,16 +366,12 @@ simulate.spline_model <- function(
   ...
 ) {
   if (is.null(innov)) {
-    if (!exists(".Random.seed", envir = .GlobalEnv)) {
-      runif(1)
-    }
-    if (is.null(seed)) {
-      RNGstate <- .Random.seed
-    } else {
-      R.seed <- .Random.seed
+    RNGstate <- get_seed()
+    if (!is.null(seed)) {
+      R.seed <- RNGstate
       set.seed(seed)
       RNGstate <- structure(seed, kind = as.list(RNGkind()))
-      on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
+      on.exit(assign(".Random.seed", R.seed, envir = globalenv()))
     }
   } else {
     nsim <- length(innov)
@@ -411,7 +407,7 @@ simulate.spline_model <- function(
   } else {
     y <- object$y[sample(nhistory - length(object$y)) + seq(nhistory)]
   }
-  y <- c(y, rep(NA, nsim))
+  y <- c(y, rep(NA_real_, nsim))
   for (i in nhistory + seq(nsim) - 1) {
     mat <- spline.matrices(i, object$beta / i^3, compute_P = FALSE)
     newmat <- spline.matrices(i, object$beta / i^3, n0 = 1, compute_inverse = FALSE)

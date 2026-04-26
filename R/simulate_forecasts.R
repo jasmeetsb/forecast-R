@@ -19,14 +19,14 @@ simulate_forecast <- function(
     }
     bootstrap <- FALSE
   }
-  sim <- matrix(NA, nrow = npaths, ncol = h)
+  sim <- matrix(NA_real_, nrow = npaths, ncol = h)
   for (i in seq_len(npaths)) {
     sim[i, ] <- simulate(
       object,
       nsim = h,
       bootstrap = bootstrap,
       lambda = lambda,
-      innov = innov,
+      innov = if (is.null(innov)) NULL else innov[, i],
       future = TRUE,
       ...
     )
@@ -49,5 +49,5 @@ simulate_forecast <- function(
   m <- tspy[3]
   lower <- ts(lower, start = tspy[2] + 1 / m, frequency = m)
   upper <- ts(upper, start = tspy[2] + 1 / m, frequency = m)
-  return(list(lower = lower, upper = upper))
+  list(lower = lower, upper = upper)
 }

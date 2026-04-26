@@ -258,7 +258,7 @@ forecast.stl <- function(
   if (is.null(xreg) != is.null(newxreg)) {
     stop("xreg and newxreg arguments must both be supplied")
   }
-  if (!is.null(newxreg) && NROW(as.matrix(newxreg)) != h) {
+  if (!is.null(newxreg) && NROW(newxreg) != h) {
     stop(
       "newxreg should have the same number of rows as the forecast horizon h"
     )
@@ -583,7 +583,7 @@ forecast.stlm <- function(
   allow.multiplicative.trend = FALSE,
   ...
 ) {
-  if (!is.null(newxreg) && nrow(as.matrix(newxreg)) != h) {
+  if (!is.null(newxreg) && NROW(newxreg) != h) {
     stop(
       "newxreg should have the same number of rows as the forecast horizon h"
     )

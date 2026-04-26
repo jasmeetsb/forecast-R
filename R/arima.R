@@ -192,7 +192,7 @@ SeasDummy <- function(x) {
     stop("Non-seasonal data")
   }
   tt <- seq_len(n)
-  fmat <- matrix(NA, nrow = n, ncol = 2 * m)
+  fmat <- matrix(NA_real_, nrow = n, ncol = 2 * m)
   for (i in seq_len(m)) {
     fmat[, 2 * i] <- sin(2 * pi * i * tt / m)
     fmat[, 2 * (i - 1) + 1] <- cos(2 * pi * i * tt / m)
@@ -228,7 +228,7 @@ SD.test <- function(wts, s = frequency(wts)) {
       Fhat[i, n] <- sum(Fhataux[1:i, n])
     }
   }
-  wnw <- 1 - seq(1, ltrunc, 1) / (ltrunc + 1)
+  wnw <- 1 - seq_len(ltrunc) / (ltrunc + 1)
   Ne <- nrow(Fhataux)
   Omnw <- 0
   for (k in seq_len(ltrunc)) {
@@ -332,9 +332,9 @@ forecast.Arima <- function(
 
   use.drift <- "drift" %in% names(object$coef)
   x <- object$x <- getResponse(object)
-  usexreg <- (use.drift || "xreg" %in% names(object)) # | use.constant)
+  use.xreg <- (use.drift || "xreg" %in% names(object)) # | use.constant)
 
-  if (!is.null(xreg) && usexreg) {
+  if (!is.null(xreg) && use.xreg) {
     if (!is.numeric(xreg)) {
       stop("xreg should be a numeric matrix or a numeric vector")
     }
@@ -390,7 +390,7 @@ forecast.Arima <- function(
     } else {
       stop("Strange value of object$constant")
     }
-  } else if (usexreg) {
+  } else if (use.xreg) {
     if (is.null(xreg)) {
       stop("No regressors provided")
     }
@@ -431,13 +431,14 @@ forecast.Arima <- function(
       npaths = npaths,
       bootstrap = bootstrap,
       innov = innov,
-      lambda = lambda
+      lambda = lambda,
+      xreg = xreg
     )
     lower <- hilo$lower
     upper <- hilo$upper
   } else {
     # Compute prediction intervals via the normal distribution
-    lower <- matrix(NA, ncol = nint, nrow = length(pred$pred))
+    lower <- matrix(NA_real_, ncol = nint, nrow = length(pred$pred))
     upper <- lower
     for (i in seq_len(nint)) {
       qq <- qnorm(0.5 * (1 + level[i] / 100))
@@ -521,7 +522,7 @@ forecast.ar <- function(
     lower <- hilo$lower
     upper <- hilo$upper
   } else {
-    lower <- matrix(NA, ncol = nint, nrow = length(pred$pred))
+    lower <- matrix(NA_real_, ncol = nint, nrow = length(pred$pred))
     upper <- lower
     for (i in seq_len(nint)) {
       qq <- qnorm(0.5 * (1 + level[i] / 100))
@@ -610,7 +611,7 @@ getxreg <- function(z) {
 #'
 #' @export
 arima.errors <- function(object) {
-  message("Deprecated, use residuals.Arima(object, type='regression') instead")
+  .Deprecated("residuals.Arima(object, type='regression')")
   residuals.Arima(object, type = "regression")
 }
 

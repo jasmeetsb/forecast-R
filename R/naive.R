@@ -63,7 +63,7 @@ rw_model <- function(
     y <- BoxCox(y, lambda)
     lambda <- attr(y, "lambda")
     attr(lambda, "biasadj") <- biasadj
-}
+  }
 
   m <- frequency(y)
   # Complete missing values with lagged values
@@ -77,7 +77,7 @@ rw_model <- function(
   }
 
   fitted <- ts(
-    c(rep(NA, lag), head(fits, -lag)),
+    c(rep(NA_real_, lag), head(fits, -lag)),
     start = start(y),
     frequency = m
   )
@@ -131,6 +131,7 @@ print.rw_model <- function(x, ...) {
     ))
   }
   cat(paste("Residual sd:", round(sqrt(x$sigma2), 4), "\n"))
+  invisible(x)
 }
 
 #' @export
@@ -142,8 +143,8 @@ fitted.rw_model <- function(object, ...) {
 #'
 #' Returns forecasts and prediction intervals for a generalized random walk model.
 #' [rwf()] is a convenience function that combines [rw_model()] and [forecast()].
-#' [naive()] is a wrapper to [rwf()] with `drift=FALSE` and `lag=1`, while
-#' [snaive()] is a wrapper to [rwf()] with `drift=FALSE` and `lag=frequency(y)`.
+#' [naive()] is a wrapper to [rwf()] with `drift = FALSE` and `lag = 1`, while
+#' [snaive()] is a wrapper to [rwf()] with `drift = FALSE` and `lag = frequency(y)`.
 #'
 #' @inherit rw_model details
 #' @param object An object of class `rw_model` returned by [rw_model()].
@@ -186,10 +187,10 @@ forecast.rw_model <- function(
 ) {
   lag <- object$par$lag
   fullperiods <- (h - 1) / lag + 1
-  steps <- rep(1:fullperiods, rep(lag, fullperiods))[1:h]
+  steps <- rep(seq_len(fullperiods), rep(lag, fullperiods))[seq_len(h)]
 
   # Point forecasts
-  fc <- rep(object$future, fullperiods)[1:h] + steps * object$par$drift
+  fc <- rep(object$future, fullperiods)[seq_len(h)] + steps * object$par$drift
 
   # Intervals
   # Adjust prediction intervals to allow for drift coefficient standard error
@@ -206,7 +207,7 @@ forecast.rw_model <- function(
       object = object,
       h = h,
       level = level,
-      npaths =npaths,
+      npaths = npaths,
       bootstrap = bootstrap,
       innov = innov,
       lambda = lambda,
@@ -216,7 +217,7 @@ forecast.rw_model <- function(
     upper <- hilo$upper
   } else {
     z <- qnorm(.5 + level / 200)
-    lower <- upper <- matrix(NA, nrow = h, ncol = nconf)
+    lower <- upper <- matrix(NA_real_, nrow = h, ncol = nconf)
     for (i in seq_len(nconf)) {
       lower[, i] <- fc - z[i] * se
       upper[, i] <- fc + z[i] * se
@@ -348,7 +349,8 @@ snaive <- function(
     lambda = lambda,
     drift = FALSE,
     biasadj = biasadj,
-    lag = frequency(x)
+    lag = frequency(x),
+    ...
   )
   fc$model$call <- match.call()
   fc$series <- deparse1(substitute(y))

@@ -24,10 +24,10 @@ undo.na.ends <- function(x, y) {
   j <- nonmiss[1]
   k <- nonmiss[length(nonmiss)]
   if (j > 1) {
-    y <- c(rep(NA, j - 1), y)
+    y <- c(rep(NA_real_, j - 1), y)
   }
   if (k < n) {
-    y <- c(y, rep(NA, n - k))
+    y <- c(y, rep(NA_real_, n - k))
   }
   tspx <- tsp(x)
   if (!is.null(tspx)) {
@@ -241,7 +241,7 @@ forecast.fracdiff <- function(
   biasadj = attr(lambda, "biasadj"),
   ...
 ) {
-  if(abs(h - round(h)) > .Machine$double.eps^0.5 || h <= 0) {
+  if (abs(h - round(h)) > .Machine$double.eps^0.5 || h <= 0) {
     stop("h must be a positive integer")
   }
   h <- as.integer(round(h))
@@ -320,21 +320,21 @@ forecast.fracdiff <- function(
   } else {
     # Compute prediction intervals using normal approximation
     nint <- length(level)
-    upper <- lower <- matrix(NA, ncol = nint, nrow = h)
+    upper <- lower <- matrix(NA_real_, ncol = nint, nrow = h)
     for (i in seq_len(nint)) {
       qq <- qnorm(0.5 * (1 + level[i] / 100))
       lower[, i] <- fcast.x - qq * fse
       upper[, i] <- fcast.x + qq * fse
     }
-    lower <- ts(lower + meanx, start = endx + 1/m, frequency = m)
-    upper <- ts(upper + meanx, start = endx + 1/m, frequency = m)
+    lower <- ts(lower + meanx, start = endx + 1 / m, frequency = m)
+    upper <- ts(upper + meanx, start = endx + 1 / m, frequency = m)
     colnames(lower) <- colnames(upper) <- paste0(level, "%")
   }
   res <- undo.na.ends(x, residuals(fit))
   fits <- x - res
   mean.fcast <- ts(
     fcast.x + meanx,
-    start = endx + 1/m,
+    start = endx + 1 / m,
     frequency = m
   )
   if (!is.null(lambda)) {
@@ -346,7 +346,7 @@ forecast.fracdiff <- function(
       biasadj = biasadj,
       fvar = fse^2
     )
-    if(!bootstrap && !simulate) {
+    if (!bootstrap && !simulate) {
       # Bootstrap intervals are already backtransformed
       lower <- InvBoxCox(lower, lambda)
       upper <- InvBoxCox(upper, lambda)

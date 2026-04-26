@@ -524,6 +524,7 @@ print.bats <- function(x, ...) {
   cat("\nAIC: ")
   cat(x$AIC)
   cat("\n")
+  invisible(x)
 }
 
 

@@ -185,6 +185,7 @@ forecast.default <- function(object, ...) forecast.ts(object, ...)
 #' @export
 print.forecast <- function(x, ...) {
   print(as.data.frame(x))
+  invisible(x)
 }
 
 #' @export
@@ -446,7 +447,7 @@ plot.forecast <- function(
 
   # Check if all historical values are missing
   if (n > 0) {
-    if (sum(is.na(xx)) == length(xx)) {
+    if (all(is.na(xx))) {
       n <- 0
     }
   }
@@ -454,7 +455,7 @@ plot.forecast <- function(
     xx <- as.ts(xx)
     freq <- frequency(xx)
     nx <- max(which(!is.na(xx)))
-    xxx <- xx[1:nx]
+    xxx <- xx[seq_len(nx)]
     include <- min(include, nx)
 
     if (!showgap) {
@@ -492,7 +493,7 @@ plot.forecast <- function(
   }
   plot(
     ts(
-      c(xxx[(nx - include + 1):nx], rep(NA, npred)),
+      c(xxx[(nx - include + 1):nx], rep(NA_real_, npred)),
       end = tsp(xx)[2] + (nx - n) / freq + npred / freq,
       frequency = freq
     ),
@@ -594,17 +595,8 @@ hfitted.default <- function(object, h = 1, FUN = NULL, ...) {
   }
   # Attempt to get model function
   if (is.null(FUN)) {
-    FUN <- class(object)
-    for (i in FUN) {
-      if (exists(i)) {
-        if (typeof(eval(parse(text = i)[[1]])) == "closure") {
-          FUN <- i
-          i <- "Y"
-          break
-        }
-      }
-    }
-    if (i != "Y") {
+    FUN <- Find(function(x) typeof(get0(x)) == "closure", class(object))
+    if (is.null(FUN)) {
       stop("Could not find appropriate function to refit, specify FUN=function")
     }
   }
@@ -619,12 +611,12 @@ hfitted.default <- function(object, h = 1, FUN = NULL, ...) {
     refitarg$use.initial.values <- TRUE
   }
   for (i in seq_len(n - h)) {
-    refitarg[[1]] <- ts(x[1:i], start = tspx[1], frequency = tspx[3])
+    refitarg[[1]] <- ts(x[seq_len(i)], start = tspx[1], frequency = tspx[3])
     if (!is.null(object$xreg) && any(colnames(object$xreg) != "drift")) {
       if (any(colnames(object$xreg) == "drift")) {
         idx <- which(colnames(object$xreg) == "drift")
         refitarg$xreg <- ts(
-          object$xreg[1:i, -idx],
+          object$xreg[seq_len(i), -idx],
           start = tspx[1],
           frequency = tspx[3]
         )
@@ -635,7 +627,7 @@ hfitted.default <- function(object, h = 1, FUN = NULL, ...) {
         )
       } else {
         refitarg$xreg <- ts(
-          object$xreg[1:i, ],
+          object$xreg[seq_len(i), ],
           start = tspx[1],
           frequency = tspx[3]
         )
@@ -682,15 +674,15 @@ forecast.forecast <- function(object, ...) {
       )
     }
     tspf <- tsp(object$mean)
-    object$mean <- ts(object$mean[1:h], start = tspf[1], frequency = tspf[3])
+    object$mean <- ts(object$mean[seq_len(h)], start = tspf[1], frequency = tspf[3])
     if (!is.null(object$upper)) {
       object$upper <- ts(
-        object$upper[1:h, , drop = FALSE],
+        object$upper[seq_len(h), , drop = FALSE],
         start = tspf[1],
         frequency = tspf[3]
       )
       object$lower <- ts(
-        object$lower[1:h, , drop = FALSE],
+        object$lower[seq_len(h), , drop = FALSE],
         start = tspf[1],
         frequency = tspf[3]
       )

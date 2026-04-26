@@ -240,17 +240,17 @@ makeFMatrix <- function(
         a.row.two <- cbind(diag((i - 1)), matrix(0, nrow = (i - 1), ncol = 1))
         A <- rbind(a.row.one, a.row.two)
       } else {
-        old.A.rows <- dim(A)[1]
-        old.A.columns <- dim(A)[2]
+        old.A.rows <- nrow(A)
+        old.A.columns <- ncol(A)
         a.row.one <- matrix(0, nrow = 1, ncol = i)
         a.row.one[i] <- 1
         a.row.two <- cbind(diag((i - 1)), matrix(0, nrow = (i - 1), ncol = 1))
         Ai <- rbind(a.row.one, a.row.two)
-        A <- rbind(A, matrix(0, nrow = dim(Ai)[1], ncol = old.A.columns))
-        A <- cbind(A, matrix(0, nrow = dim(A)[1], ncol = dim(Ai)[2]))
+        A <- rbind(A, matrix(0, nrow = nrow(Ai), ncol = old.A.columns))
+        A <- cbind(A, matrix(0, nrow = nrow(A), ncol = ncol(Ai)))
         A[
-          ((old.A.rows + 1):(old.A.rows + dim(Ai)[1])),
-          ((old.A.columns + 1):(old.A.columns + dim(Ai)[2]))
+          ((old.A.rows + 1):(old.A.rows + nrow(Ai))),
+          ((old.A.columns + 1):(old.A.columns + ncol(Ai)))
         ] <- Ai
       }
     }

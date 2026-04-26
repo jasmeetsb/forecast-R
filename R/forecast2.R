@@ -108,7 +108,7 @@ InvBoxCox <- function(x, lambda, biasadj = FALSE, fvar = NULL) {
 
 # Deprecated
 InvBoxCoxf <- function(x = NULL, fvar = NULL, lambda = NULL) {
-  message("Deprecated, use InvBoxCox instead")
+  .Deprecated("InvBoxCox")
   if (is.null(lambda)) {
     stop("Must specify lambda using lambda=numeric(1)")
   }
@@ -170,7 +170,7 @@ forecast.StructTS <- function(
   pred <- predict(object, n.ahead = h)
   level <- getConfLevel(level, fan)
   nint <- length(level)
-  upper <- lower <- matrix(NA, ncol = nint, nrow = length(pred$pred))
+  upper <- lower <- matrix(NA_real_, ncol = nint, nrow = length(pred$pred))
   for (i in seq_len(nint)) {
     qq <- qnorm(0.5 * (1 + level[i] / 100))
     lower[, i] <- pred$pred - qq * pred$se
@@ -214,7 +214,7 @@ forecast.StructTS <- function(
       method = method,
       model = object,
       level = level,
-      mean = pred$pred,
+      mean = mean,
       lower = lower,
       upper = upper,
       x = x,
@@ -277,7 +277,7 @@ forecast.HoltWinters <- function(
     level = level[1] / 100
   )
   pmean <- pred[, 1]
-  upper <- lower <- matrix(NA, ncol = nint, nrow = length(pred[, 1]))
+  upper <- lower <- matrix(NA_real_, ncol = nint, nrow = length(pred[, 1]))
   se <- (pred[, 2] - pred[, 3]) / (2 * qnorm(0.5 * (1 + level[1] / 100)))
   for (i in seq_len(nint)) {
     qq <- qnorm(0.5 * (1 + level[i] / 100))
@@ -304,7 +304,7 @@ forecast.HoltWinters <- function(
   # Pad fitted values with NAs
   nf <- length(fitted)
   n <- length(x)
-  fitted <- ts(c(rep(NA, n - nf), fitted))
+  fitted <- ts(c(rep(NA_real_, n - nf), fitted))
   fitted <- copy_msts(object$x, fitted)
 
   pmean <- future_msts(object$x, pmean)

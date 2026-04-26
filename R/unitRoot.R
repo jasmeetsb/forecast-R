@@ -252,9 +252,8 @@ nsdiffs <- function(
   }
 
   if (!missing(m)) {
-    warning(
-      "argument m is deprecated; please set the frequency in the ts object.",
-      call. = FALSE
+    .Deprecated(
+      msg = "argument `m` is deprecated; please set the frequency in the ts object."
     )
     x <- ts(x, frequency = m)
   }
@@ -553,4 +552,5 @@ print.OCSBtest <- function(x, ...) {
   cat("alternative hypothesis: stationary")
   cat("\n\n")
   cat(paste0("Lag order ", x$lag.order, " was selected using ", x$lag.method))
+  invisible(x)
 }
