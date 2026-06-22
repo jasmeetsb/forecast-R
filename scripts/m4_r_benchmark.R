@@ -134,12 +134,15 @@ fit_forecast <- function(method, y, h, frequency) {
     model <- fit$method
     aic <- tryCatch(as.numeric(fit$aic), error = function(e) NA_real_)
   } else if (method == "tbats") {
-    fit <- tbats(y)
+    # use.parallel=FALSE: tbats' internal cluster collides with the outer
+    # mclapply workers (socket-port exhaustion). The model SELECTION is identical
+    # either way (parallel only distributes the search), so accuracy is unchanged.
+    fit <- tbats(y, use.parallel = FALSE)
     fc <- forecast(fit, h = h)
     model <- tryCatch(trimws(capture.output(print(fit))[1]),
                       error = function(e) "TBATS")
   } else if (method == "bats") {
-    fit <- bats(y)
+    fit <- bats(y, use.parallel = FALSE)
     fc <- forecast(fit, h = h)
     model <- tryCatch(trimws(capture.output(print(fit))[1]),
                       error = function(e) "BATS")
