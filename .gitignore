@@ -18,3 +18,5 @@ docs/*
 .vscode/*
 .history
 .comments/
+.DS_Store
+._*
